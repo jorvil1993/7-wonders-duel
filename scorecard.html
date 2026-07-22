@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>7 Wonders Duel - Anotador Digital de Puntuación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0f1319;
+      --bg-card: rgba(23, 29, 41, 0.85);
+      --bg-card-hover: rgba(33, 41, 57, 0.95);
+      --gold-primary: #f59e0b;
+      --gold-light: #fbbf24;
+      --gold-dark: #d97706;
+      --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      
+      --color-blue: #3b82f6;
+      --color-green: #10b981;
+      --color-yellow: #eab308;
+      --color-purple: #8b5cf6;
+      --color-wonder: #d97706;
+      --color-teal: #14b8a6;
+      --color-coin: #f59e0b;
+      --color-red: #ef4444;
+      
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 120px;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.15), transparent 70%),
+        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.1), transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      padding: 16px;
+    }
+
+    /* HERO HEADER */
+    .hero-card {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      background: #000;
+    }
+
+    .hero-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      object-position: center 25%;
+      filter: brightness(0.65) contrast(1.1);
+      transition: transform 0.5s ease;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15, 19, 25, 1) 0%, rgba(15, 19, 25, 0.4) 60%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(245, 158, 11, 0.4);
+      margin-bottom: 4px;
+    }
+
+    .hero-subtitle {
+      font-size: 13px;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    /* PLAYER SETUP CARD */
+    .section-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .section-icon {
+      font-size: 20px;
+      color: var(--gold-primary);
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    /* PLAYER NAMES INPUTS */
+    .players-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .player-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .player-box.p1-focus {
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    }
+
+    .player-box.p2-focus {
+      border-color: rgba(239, 68, 68, 0.6);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .player-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .p1-label { color: #60a5fa; }
+    .p2-label { color: #f87171; }
+
+    .player-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .player-input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* DIRECT VICTORY BUTTONS */
+    .victory-shortcuts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-shortcut {
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-shortcut:active {
+      transform: scale(0.97);
+    }
+
+    .btn-shortcut.military {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(185, 28, 28, 0.3));
+    }
+
+    .btn-shortcut.science {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(4, 120, 87, 0.3));
+    }
+
+    /* CATEGORY CARDS */
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .category-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: border-color 0.3s ease;
+    }
+
+    .category-item.blue { border-left: 4px solid var(--color-blue); }
+    .category-item.green { border-left: 4px solid var(--color-green); }
+    .category-item.yellow { border-left: 4px solid var(--color-yellow); }
+    .category-item.purple { border-left: 4px solid var(--color-purple); }
+    .category-item.wonder { border-left: 4px solid var(--color-wonder); }
+    .category-item.teal { border-left: 4px solid var(--color-teal); }
+    .category-item.coin { border-left: 4px solid var(--color-coin); }
+    .category-item.red { border-left: 4px solid var(--color-red); }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .category-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .category-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .category-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* INPUT ROW FOR PLAYERS */
+    .inputs-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .input-control {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px;
+    }
+
+    .btn-step {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-step:active {
+      background: rgba(245, 158, 11, 0.4);
+    }
+
+    .val-input {
+      width: 45px;
+      text-align: center;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .coin-calc-hint {
+      font-size: 10px;
+      color: var(--gold-light);
+      text-align: right;
+      margin-top: 2px;
+    }
+
+    /* STICKY BOTTOM SCOREBAR */
+    .sticky-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 19, 25, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 12px 16px 20px 16px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+    }
+
+    .scores-summary {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .score-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .score-card.leading {
+      border-color: var(--gold-primary);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(0, 0, 0, 0.4));
+    }
+
+    .score-card.leading::after {
+      content: '👑';
+      position: absolute;
+      top: -10px;
+      font-size: 14px;
+    }
+
+    .score-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      max-width: 100px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .score-num {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .vs-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      color: var(--gold-primary);
+      font-weight: 700;
+    }
+
+    .btn-finish {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--gold-gradient);
+      color: #000;
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .btn-finish:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.6);
+    }
+
+    /* MODAL RESULTADOS */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #131924;
+      border: 1.5px solid var(--gold-primary);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(245, 158, 11, 0.3);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+
+    .winner-crown {
+      font-size: 48px;
+      margin-bottom: 8px;
+      animation: floatCrown 2s ease-in-out infinite;
+    }
+
+    @keyframes floatCrown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .winner-title {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+
+    .winner-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+
+    .breakdown-table th {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-light);
+      padding: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 12px;
+    }
+
+    .breakdown-table td {
+      padding: 8px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--text-main);
+    }
+
+    .breakdown-table tr.total-row td {
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--gold-primary);
+      border-top: 2px solid var(--gold-primary);
+      padding-top: 10px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-modal {
+      flex: 1;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-modal.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .btn-modal.primary {
+      background: var(--gold-gradient);
+      color: #000;
+    }
+
+    /* CONFETTI CANVAS */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 250;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+    
+    <!-- HERO COVER CARD -->
+    <div class="hero-card">
+      <img src="img/cover.jpg" alt="7 Wonders Duel Portada" class="hero-img" onerror="this.style.display='none'">
+      <div class="hero-overlay">
+        <h1 class="hero-title">7 WONDERS DUEL</h1>
+        <p class="hero-subtitle">Anotador Digital de Puntuación</p>
+      </div>
+    </div>
+
+    <!-- PLAYERS SETUP -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-icon">⚔️</span>
+        <h2 class="section-title">Nombre de los Jugadores</h2>
+      </div>
+      <div class="players-grid">
+        <div class="player-box p1-focus" id="box-p1">
+          <div class="player-label p1-label">
+            <span>🛡️</span> Jugador 1
+          </div>
+          <input type="text" id="name-p1" class="player-input" value="Jugador A" placeholder="Nombre P1">
+        </div>
+        <div class="player-box p2-focus" id="box-p2">
+          <div class="player-label p2-label">
+            <span>🏛️</span> Jugador 2
+          </div>
+          <input type="text" id="name-p2" class="player-input" value="Jugador B" placeholder="Nombre P2">
+        </div>
+      </div>
+    </div>
+
+    <!-- SHORTCUT VICTORY BUTTONS -->
+    <div class="victory-shortcuts">
+      <button class="btn-shortcut military" onclick="triggerDirectVictory('militar')">
+        <span>⚔️</span> Victoria Militar
+      </button>
+      <button class="btn-shortcut science" onclick="triggerDirectVictory('cientifica')">
+        <span>🧪</span> Victoria Científica
+      </button>
+    </div>
+
+    <!-- CATEGORIES SCORING -->
+    <div class="category-list">
+
+      <!-- 1. CIVILES -->
+      <div class="category-item blue">
+        <div class="category-header">
+          <div class="category-title-group">
+            <div class="category-badge" style="background: rgba(59,130,246,0.2); color:#60a5fa;">🔵</div>
+            <div>
+              <div class="category-title">Cartas Azules (Civiles)</div>
+              <div class="category-sub">Puntos de victoria impresos en cartas azules</div>
+            </div>
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('blue-p1', -1)">-</button>
+            <input type="number" id="blue-p1" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('blue-p1', 1)">+</button>
+          </div>
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('blue-p2', -1)">-</button>
+            <input type="number" id="blue-p2" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('blue-p2', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CIENCIA -->
+      <div class="category-item green">
+        <div class="category-header">
+          <div class="category-title-group">
+            <div class="category-badge" style="background: rgba(16,185,129,0.2); color:#34d399;">🟢</div>
+            <div>
+              <div class="category-title">Cartas Verdes (Ciencia)</div>
+              <div class="category-sub">Puntos impresos en estructuras científicas</div>
+            </div>
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('green-p1', -1)">-</button>
+            <input type="number" id="green-p1" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('green-p1', 1)">+</button>
+          </div>
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('green-p2', -1)">-</button>
+            <input type="number" id="green-p2" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('green-p2', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. COMERCIO -->
+      <div class="category-item yellow">
+        <div class="category-header">
+          <div class="category-title-group">
+            <div class="category-badge" style="background: rgba(234,179,8,0.2); color:#facc15;">🟡</div>
+            <div>
+              <div class="category-title">Cartas Amarillas (Comercio)</div>
+              <div class="category-sub">Puntos de estructuras comerciales</div>
+            </div>
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('yellow-p1', -1)">-</button>
+            <input type="number" id="yellow-p1" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('yellow-p1', 1)">+</button>
+          </div>
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('yellow-p2', -1)">-</button>
+            <input type="number" id="yellow-p2" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('yellow-p2', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. GREMIOS -->
+      <div class="category-item purple">
+        <div class="category-header">
+          <div class="category-title-group">
+            <div class="category-badge" style="background: rgba(139,92,246,0.2); color:#a78bfa;">🟣</div>
+            <div>
+              <div class="category-title">Cartas Moradas (Gremios)</div>
+              <div class="category-sub">Puntos otorgados por los gremios de la Edad III</div>
+            </div>
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('purple-p1', -1)">-</button>
+            <input type="number" id="purple-p1" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('purple-p1', 1)">+</button>
+          </div>
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('purple-p2', -1)">-</button>
+            <input type="number" id="purple-p2" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('purple-p2', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. MARAVILLAS -->
+      <div class="category-item wonder">
+        <div class="category-header">
+          <div class="category-title-group">
+            <div class="category-badge" style="background: rgba(217,119,6,0.2); color:#fbbf24;">🏛️</div>
+            <div>
+              <div class="category-title">Maravillas Construidas</div>
+              <div class="category-sub">Suma de puntos de tus maravillas completadas</div>
+            </div>
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('wonder-p1', -1)">-</button>
+            <input type="number" id="wonder-p1" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('wonder-p1', 1)">+</button>
+          </div>
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('wonder-p2', -1)">-</button>
+            <input type="number" id="wonder-p2" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('wonder-p2', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. PROGRESO -->
+      <div class="category-item teal">
+        <div class="category-header">
+          <div class="category-title-group">
+            <div class="category-badge" style="background: rgba(20,184,166,0.2); color:#2dd4bf;">📜</div>
+            <div>
+              <div class="category-title">Fichas de Progreso</div>
+              <div class="category-sub">Puntos de fichas verdes (Ej: Agricultura = 6 PV)</div>
+            </div>
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('teal-p1', -1)">-</button>
+            <input type="number" id="teal-p1" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('teal-p1', 1)">+</button>
+          </div>
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('teal-p2', -1)">-</button>
+            <input type="number" id="teal-p2" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('teal-p2', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. TESORERÍA (MONEDAS) -->
+      <div class="category-item coin">
+        <div class="category-header">
+          <div class="category-title-group">
+            <div class="category-badge" style="background: rgba(245,158,11,0.2); color:#fcd34d;">🪙</div>
+            <div>
+              <div class="category-title">Tesorería (Monedas)</div>
+              <div class="category-sub">Introduce el total de monedas (3 monedas = 1 PV)</div>
+            </div>
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div>
+            <div class="input-control">
+              <button class="btn-step" onclick="stepVal('coin-p1', -1)">-</button>
+              <input type="number" id="coin-p1" class="val-input" value="0" min="0" oninput="calculateScores()">
+              <button class="btn-step" onclick="stepVal('coin-p1', 1)">+</button>
+            </div>
+            <div class="coin-calc-hint" id="coin-pv-p1">0 PV</div>
+          </div>
+          <div>
+            <div class="input-control">
+              <button class="btn-step" onclick="stepVal('coin-p2', -1)">-</button>
+              <input type="number" id="coin-p2" class="val-input" value="0" min="0" oninput="calculateScores()">
+              <button class="btn-step" onclick="stepVal('coin-p2', 1)">+</button>
+            </div>
+            <div class="coin-calc-hint" id="coin-pv-p2">0 PV</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. MILITAR -->
+      <div class="category-item red">
+        <div class="category-header">
+          <div class="category-title-group">
+            <div class="category-badge" style="background: rgba(239,68,68,0.2); color:#f87171;">🛡️</div>
+            <div>
+              <div class="category-title">Fuerza Militar (Escudos)</div>
+              <div class="category-sub">Puntos de posición final en el medidor (0, 2, 5 o 10)</div>
+            </div>
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('red-p1', -1)">-</button>
+            <input type="number" id="red-p1" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('red-p1', 1)">+</button>
+          </div>
+          <div class="input-control">
+            <button class="btn-step" onclick="stepVal('red-p2', -1)">-</button>
+            <input type="number" id="red-p2" class="val-input" value="0" min="0" oninput="calculateScores()">
+            <button class="btn-step" onclick="stepVal('red-p2', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- STICKY BOTTOM SCOREBOARD -->
+  <div class="sticky-bar">
+    <div class="scores-summary">
+      <div class="score-card" id="card-p1">
+        <span class="score-name" id="disp-p1-name">Jugador A</span>
+        <span class="score-num" id="disp-p1-score">0</span>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="score-card" id="card-p2">
+        <span class="score-name" id="disp-p2-name">Jugador B</span>
+        <span class="score-num" id="disp-p2-score">0</span>
+      </div>
+    </div>
+    <button class="btn-finish" onclick="finishGame()">🏆 Declarar Ganador</button>
+  </div>
+
+  <!-- RESULT MODAL -->
+  <div class="modal-overlay" id="result-modal">
+    <div class="modal-card">
+      <div class="winner-crown">👑</div>
+      <h2 class="winner-title" id="winner-name-text">¡VICTORIA!</h2>
+      <p class="winner-subtitle" id="winner-reason-text">Ha ganado la partida de 7 Wonders Duel</p>
+
+      <table class="breakdown-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Categoría</th>
+            <th id="th-p1">P1</th>
+            <th id="th-p2">P2</th>
+          </tr>
+        </thead>
+        <tbody id="breakdown-body">
+          <!-- Filled dynamically -->
+        </tbody>
+      </table>
+
+      <div class="modal-actions">
+        <button class="btn-modal secondary" onclick="closeModal()">Seguir Editando</button>
+        <button class="btn-modal primary" onclick="resetGame()">Nueva Partida</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Name sync
+    const nameP1Input = document.getElementById('name-p1');
+    const nameP2Input = document.getElementById('name-p2');
+    const dispP1Name = document.getElementById('disp-p1-name');
+    const dispP2Name = document.getElementById('disp-p2-name');
+
+    function syncNames() {
+      const p1 = nameP1Input.value.trim() || 'Jugador A';
+      const p2 = nameP2Input.value.trim() || 'Jugador B';
+      dispP1Name.innerText = p1;
+      dispP2Name.innerText = p2;
+    }
+
+    nameP1Input.addEventListener('input', syncNames);
+    nameP2Input.addEventListener('input', syncNames);
+    syncNames();
+
+    function stepVal(id, delta) {
+      const el = document.getElementById(id);
+      let val = parseInt(el.value) || 0;
+      val = Math.max(0, val + delta);
+      el.value = val;
+      calculateScores();
+    }
+
+    function getVal(id) {
+      return parseInt(document.getElementById(id).value) || 0;
+    }
+
+    function calculateScores() {
+      // P1 scores
+      const blue1 = getVal('blue-p1');
+      const green1 = getVal('green-p1');
+      const yellow1 = getVal('yellow-p1');
+      const purple1 = getVal('purple-p1');
+      const wonder1 = getVal('wonder-p1');
+      const teal1 = getVal('teal-p1');
+      const coins1 = getVal('coin-p1');
+      const coinPv1 = Math.floor(coins1 / 3);
+      const red1 = getVal('red-p1');
+      
+      document.getElementById('coin-pv-p1').innerText = `${coinPv1} PV (${coins1} 🪙)`;
+
+      const totalP1 = blue1 + green1 + yellow1 + purple1 + wonder1 + teal1 + coinPv1 + red1;
+      document.getElementById('disp-p1-score').innerText = totalP1;
+
+      // P2 scores
+      const blue2 = getVal('blue-p2');
+      const green2 = getVal('green-p2');
+      const yellow2 = getVal('yellow-p2');
+      const purple2 = getVal('purple-p2');
+      const wonder2 = getVal('wonder-p2');
+      const teal2 = getVal('teal-p2');
+      const coins2 = getVal('coin-p2');
+      const coinPv2 = Math.floor(coins2 / 3);
+      const red2 = getVal('red-p2');
+
+      document.getElementById('coin-pv-p2').innerText = `${coinPv2} PV (${coins2} 🪙)`;
+
+      const totalP2 = blue2 + green2 + yellow2 + purple2 + wonder2 + teal2 + coinPv2 + red2;
+      document.getElementById('disp-p2-score').innerText = totalP2;
+
+      // Highlight leader
+      const cardP1 = document.getElementById('card-p1');
+      const cardP2 = document.getElementById('card-p2');
+      cardP1.classList.remove('leading');
+      cardP2.classList.remove('leading');
+
+      if (totalP1 > totalP2) {
+        cardP1.classList.add('leading');
+      } else if (totalP2 > totalP1) {
+        cardP2.classList.add('leading');
+      }
+
+      return { totalP1, totalP2 };
+    }
+
+    function triggerDirectVictory(type) {
+      const p1 = nameP1Input.value.trim() || 'Jugador A';
+      const p2 = nameP2Input.value.trim() || 'Jugador B';
+
+      let choice = prompt(`¿Quién logró la ${type === 'militar' ? 'Victoria Militar ⚔️' : 'Victoria Científica 🧪'}?\n1: ${p1}\n2: ${p2}`, "1");
+      if (choice === "1") {
+        showWinnerModal(p1, `¡Victoria ${type === 'militar' ? 'Militar Inmediata ⚔️' : 'Científica Inmediata 🧪'}!`);
+      } else if (choice === "2") {
+        showWinnerModal(p2, `¡Victoria ${type === 'militar' ? 'Militar Inmediata ⚔️' : 'Científica Inmediata 🧪'}!`);
+      }
+    }
+
+    function finishGame() {
+      const { totalP1, totalP2 } = calculateScores();
+      const p1 = nameP1Input.value.trim() || 'Jugador A';
+      const p2 = nameP2Input.value.trim() || 'Jugador B';
+
+      let winner = '';
+      let sub = '';
+
+      if (totalP1 > totalP2) {
+        winner = p1;
+        sub = `¡Ganador por puntos civiles con ${totalP1} PV contra ${totalP2} PV!`;
+      } else if (totalP2 > totalP1) {
+        winner = p2;
+        sub = `¡Ganador por puntos civiles con ${totalP2} PV contra ${totalP1} PV!`;
+      } else {
+        // Tie-breaker: coins or blue cards
+        const blue1 = getVal('blue-p1');
+        const blue2 = getVal('blue-p2');
+        if (blue1 > blue2) {
+          winner = p1;
+          sub = `¡Empate en puntos (${totalP1} PV)! ${p1} gana por mayor cantidad de cartas azules (${blue1} vs ${blue2}).`;
+        } else if (blue2 > blue1) {
+          winner = p2;
+          sub = `¡Empate en puntos (${totalP2} PV)! ${p2} gana por mayor cantidad de cartas azules (${blue2} vs ${blue1}).`;
+        } else {
+          winner = "¡EMPATE TÁCITO!";
+          sub = `Ambos jugadores han igualado con ${totalP1} PV y mismas cartas civiles.`;
+        }
+      }
+
+      showWinnerModal(winner, sub);
+    }
+
+    function showWinnerModal(winnerName, reason) {
+      document.getElementById('winner-name-text').innerText = winnerName;
+      document.getElementById('winner-reason-text').innerText = reason;
+
+      const p1 = nameP1Input.value.trim() || 'Jugador A';
+      const p2 = nameP2Input.value.trim() || 'Jugador B';
+
+      document.getElementById('th-p1').innerText = p1;
+      document.getElementById('th-p2').innerText = p2;
+
+      const categories = [
+        { label: '🔵 Cartas Azules', id1: 'blue-p1', id2: 'blue-p2' },
+        { label: '🟢 Cartas Verdes', id1: 'green-p1', id2: 'green-p2' },
+        { label: '🟡 Cartas Amarillas', id1: 'yellow-p1', id2: 'yellow-p2' },
+        { label: '🟣 Cartas Moradas', id1: 'purple-p1', id2: 'purple-p2' },
+        { label: '🏛️ Maravillas', id1: 'wonder-p1', id2: 'wonder-p2' },
+        { label: '📜 Progreso', id1: 'teal-p1', id2: 'teal-p2' },
+        { label: '🪙 Tesorería', calc: (p) => Math.floor(getVal(`coin-${p}`) / 3) },
+        { label: '🛡️ Fuerza Militar', id1: 'red-p1', id2: 'red-p2' },
+      ];
+
+      let html = '';
+      let tot1 = 0;
+      let tot2 = 0;
+
+      categories.forEach(c => {
+        const v1 = c.calc ? c.calc('p1') : getVal(c.id1);
+        const v2 = c.calc ? c.calc('p2') : getVal(c.id2);
+        tot1 += v1;
+        tot2 += v2;
+
+        html += `
+          <tr>
+            <td style="text-align:left;">${c.label}</td>
+            <td style="font-weight:${v1 > v2 ? '700' : '400'}; color:${v1 > v2 ? '#60a5fa' : 'inherit'};">${v1}</td>
+            <td style="font-weight:${v2 > v1 ? '700' : '400'}; color:${v2 > v1 ? '#f87171' : 'inherit'};">${v2}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+        <tr class="total-row">
+          <td style="text-align:left;">TOTAL FINAL</td>
+          <td>${tot1}</td>
+          <td>${tot2}</td>
+        </tr>
+      `;
+
+      document.getElementById('breakdown-body').innerHTML = html;
+      document.getElementById('result-modal').classList.add('active');
+
+      launchConfetti();
+    }
+
+    function closeModal() {
+      document.getElementById('result-modal').classList.remove('active');
+    }
+
+    function resetGame() {
+      closeModal();
+      document.querySelectorAll('.val-input').forEach(i => i.value = 0);
+      calculateScores();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // CONFETTI EFFECT
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#f59e0b', '#fbbf24', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6'];
+
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * 4 + 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rSpeed: (Math.random() - 0.5) * 10
+        });
+      }
+
+      let frame = 0;
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.rSpeed;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        });
+
+        frame++;
+        if (frame < 150) {
+          requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      render();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+contexto/
+resultados/
+*.pdf
+*.py
+*.php
+*.ps1
+game_data.js
+game_data.json
+svg_icons.js
+cards.css
+img/*
+!img/cover.jpg
