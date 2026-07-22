@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>7 Wonders Duel - Manual Oficial de Reglas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #090c10;
+      --bg-card: rgba(18, 24, 36, 0.85);
+      --bg-card-hover: rgba(28, 36, 52, 0.95);
+      --gold-primary: #f59e0b;
+      --gold-light: #fbbf24;
+      --gold-dark: #d97706;
+      --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      
+      --color-brown: #a75d26;
+      --color-grey: #94a3b8;
+      --color-blue: #3b82f6;
+      --color-green: #10b981;
+      --color-yellow: #eab308;
+      --color-purple: #8b5cf6;
+      --color-red: #ef4444;
+      --color-wonder: #d97706;
+      
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.08), transparent 50%);
+      background-attachment: fixed;
+      line-height: 1.6;
+    }
+
+    /* TOP HEADER BAR */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9, 12, 16, 0.9);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .header-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold-primary);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+      object-fit: cover;
+    }
+
+    .header-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--gold-light);
+      letter-spacing: 1px;
+      line-height: 1.2;
+    }
+
+    .header-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-nav.score {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(180, 83, 9, 0.3));
+      color: var(--gold-light);
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-nav.score:hover {
+      background: var(--gold-gradient);
+      color: #000;
+    }
+
+    .btn-toc-toggle {
+      display: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* MAIN CONTAINER & SIDEBAR LAYOUT */
+    .layout-wrapper {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px;
+      gap: 30px;
+      flex: 1;
+    }
+
+    /* INDEX SIDEBAR (TABLE OF CONTENTS) */
+    .sidebar {
+      position: sticky;
+      top: 75px;
+      height: calc(100vh - 95px);
+      overflow-y: auto;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .sidebar-title {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .toc-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .toc-item a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .toc-item a:hover, .toc-item a.active {
+      color: #fff;
+      background: rgba(245, 158, 11, 0.15);
+      border-left: 3px solid var(--gold-primary);
+      padding-left: 12px;
+    }
+
+    .toc-number {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--gold-primary);
+      min-width: 20px;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* HERO BANNER */
+    .manual-hero {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+      background: #000;
+      height: 220px;
+    }
+
+    .manual-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      filter: brightness(0.55) contrast(1.15);
+    }
+
+    .manual-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(9, 12, 16, 1) 0%, rgba(9, 12, 16, 0.3) 70%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px;
+    }
+
+    .manual-hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: 32px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 0 25px rgba(245, 158, 11, 0.5);
+      margin-bottom: 6px;
+    }
+
+    .manual-hero-sub {
+      font-size: 14px;
+      color: var(--gold-light);
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* SECTION CARD */
+    .rule-section {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      scroll-margin-top: 90px;
+    }
+
+    .section-header-title {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .section-header-title span.badge-num {
+      background: var(--gold-gradient);
+      color: #000;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    /* CONTENT STYLING */
+    p {
+      margin-bottom: 14px;
+      color: #e2e8f0;
+      font-size: 15px;
+    }
+
+    .highlight-box {
+      background: rgba(245, 158, 11, 0.08);
+      border-left: 4px solid var(--gold-primary);
+      padding: 14px 18px;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    .highlight-box.blue {
+      background: rgba(59, 130, 246, 0.08);
+      border-left-color: var(--color-blue);
+    }
+
+    .highlight-box.green {
+      background: rgba(16, 185, 129, 0.08);
+      border-left-color: var(--color-green);
+    }
+
+    .highlight-box.red {
+      background: rgba(239, 68, 68, 0.08);
+      border-left-color: var(--color-red);
+    }
+
+    /* GRID & CARDS DESIGN */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .feature-card {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .feature-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feature-card-icon {
+      font-size: 24px;
+    }
+
+    .feature-card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* CARD STRUCTURE TYPES */
+    .card-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .badge-brown { background: #78350f; border: 1px solid #b45309; }
+    .badge-grey { background: #475569; border: 1px solid #94a3b8; }
+    .badge-blue { background: #1e40af; border: 1px solid #60a5fa; }
+    .badge-green { background: #065f46; border: 1px solid #34d399; }
+    .badge-yellow { background: #854d0e; border: 1px solid #facc15; }
+    .badge-red { background: #991b1b; border: 1px solid #f87171; }
+    .badge-purple { background: #5b21b6; border: 1px solid #c084fc; }
+
+    /* WONDERS GALLERY GRID */
+    .wonders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .wonder-item-card {
+      background: rgba(15, 20, 30, 0.9);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .wonder-item-card:hover {
+      border-color: var(--gold-primary);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.2);
+    }
+
+    .wonder-img-wrap {
+      width: 100%;
+      height: 140px;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .wonder-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .wonder-item-card:hover .wonder-img {
+      transform: scale(1.05);
+    }
+
+    .wonder-content {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .wonder-title {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .wonder-effect {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .wonder-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 8px;
+    }
+
+    .tag-chip {
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tag-chip.vp { color: var(--gold-light); border-color: rgba(245, 158, 11, 0.4); }
+    .tag-chip.military { color: #f87171; border-color: rgba(239, 68, 68, 0.4); }
+    .tag-chip.turn { color: #60a5fa; border-color: rgba(59, 130, 246, 0.4); }
+
+    /* PYRAMID VISUAL DIAGRAMS */
+    .pyramid-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px dashed rgba(245, 158, 11, 0.3);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin: 16px 0;
+      text-align: center;
+    }
+
+    .pyramid-title {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      color: var(--gold-primary);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .pyramid-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pyramid-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .card-node {
+      width: 44px;
+      height: 30px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    .card-node.up {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border: 1.5px solid var(--gold-primary);
+      color: var(--gold-light);
+    }
+
+    .card-node.down {
+      background: #0f172a;
+      border: 1px dashed rgba(255,255,255,0.25);
+      color: #64748b;
+    }
+
+    /* FOOTER */
+    .app-footer {
+      background: #05070a;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-text a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+
+    /* RESPONSIVE DESIGN BREAKPOINTS */
+    @media (max-width: 992px) {
+      .layout-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        inset: 0;
+        top: 65px;
+        height: calc(100vh - 65px);
+        z-index: 95;
+        border-radius: 0;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .btn-toc-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .app-header {
+        padding: 10px 14px;
+      }
+      .manual-hero {
+        height: 160px;
+      }
+      .manual-hero-title {
+        font-size: 22px;
+      }
+      .rule-section {
+        padding: 18px 14px;
+      }
+      .section-header-title {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <a href="index.html" class="header-brand">
+      <img src="img/cover.jpg" alt="7 Wonders Duel" class="header-logo" onerror="this.src='img/board.png'">
+      <div class="header-title-group">
+        <span class="header-title">7 WONDERS DUEL</span>
+        <span class="header-subtitle">Manual de Reglas Oficial</span>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <button class="btn-toc-toggle" id="tocToggleBtn">
+        ☰ Índice
+      </button>
+      <a href="index.html" class="btn-nav score">
+        📊 Ir al Anotador
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <div class="layout-wrapper">
+
+    <!-- SIDEBAR / TABLE OF CONTENTS -->
+    <aside class="sidebar" id="sidebarNav">
+      <div class="sidebar-title">
+        <span>📖 Índice de Contenidos</span>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar regla, maravilla, ficha...">
+      </div>
+
+      <ul class="toc-menu">
+        <li class="toc-item"><a href="#sec-intro" class="active"><span class="toc-number">01</span> Introducción y Objetivo</a></li>
+        <li class="toc-item"><a href="#sec-win"><span class="toc-number">02</span> Formas de Ganar</a></li>
+        <li class="toc-item"><a href="#sec-setup"><span class="toc-number">03</span> Preparación y Draft</a></li>
+        <li class="toc-item"><a href="#sec-turn"><span class="toc-number">04</span> Desarrollo del Turno</a></li>
+        <li class="toc-item"><a href="#sec-trade"><span class="toc-number">05</span> Comercio y Cadenas</a></li>
+        <li class="toc-item"><a href="#sec-structures"><span class="toc-number">06</span> Tipos de Estructuras</a></li>
+        <li class="toc-item"><a href="#sec-pyramids"><span class="toc-number">07</span> Disposición de Cartas (Eras)</a></li>
+        <li class="toc-item"><a href="#sec-military"><span class="toc-number">08</span> Ejército y Fichas Militares</a></li>
+        <li class="toc-item"><a href="#sec-science"><span class="toc-number">09</span> Ciencia y 10 Fichas Progreso</a></li>
+        <li class="toc-item"><a href="#sec-wonders"><span class="toc-number">10</span> Catálogo de 12 Maravillas</a></li>
+        <li class="toc-item"><a href="#sec-guilds"><span class="toc-number">11</span> Gremios y Puntuación Final</a></li>
+      </ul>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="main-content">
+
+      <!-- HERO BANNER -->
+      <div class="manual-hero">
+        <img src="img/cover.jpg" alt="7 Wonders Duel Portada" class="manual-hero-img">
+        <div class="manual-hero-overlay">
+          <h1 class="manual-hero-title">REGLAMENTO Y GUÍA OFICIAL</h1>
+          <p class="manual-hero-sub">Antoine Bauza & Bruno Cathala</p>
+        </div>
+      </div>
+
+      <!-- SEC 1: INTRO -->
+      <section id="sec-intro" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">1</span>
+          Introducción y Objetivo
+        </h2>
+        <p>¡Bienvenido a <strong>7 Wonders Duel</strong>! Este juego para 2 jugadores está ambientado en el universo del aclamado juego <em>7 Wonders</em>, diseñado especialmente para ofrecer un enfrentamiento directo, táctico y dinámico.</p>
+        <p>Cada jugador es el líder de una civilización que construirá Estructuras y erigirá Maravillas. Las Estructuras y Maravillas erigidas forman tu <strong>ciudad</strong>.</p>
+        <div class="highlight-box">
+          <strong>Duración de la partida:</strong> Una partida se desarrolla a lo largo de <strong>3 Eras</strong> (utilizando los mazos de Era I, Era II y Era III). En cada Era, los jugadores jugarán alternadamente aproximadamente 10 cartas cada uno para hacer crecer su imperio.
+        </div>
+      </section>
+
+      <!-- SEC 2: FORMAS DE GANAR -->
+      <section id="sec-win" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">2</span>
+          Las 3 Formas de Ganar
+        </h2>
+        <p>Existen tres caminos hacia la victoria en 7 Wonders Duel. Dos de ellos pueden causar una <strong>victoria súbita inmediata</strong> en cualquier momento de la partida:</p>
+        
+        <div class="grid-3">
+          <div class="feature-card" style="border-top: 4px solid var(--color-red);">
+            <div class="feature-card-header">
+              <span class="feature-card-icon">⚔️</span>
+              <span class="feature-card-title">Supremacía Militar</span>
+            </div>
+            <p style="font-size: 13px;">Si empujas el medidor de Conflicto hasta la casilla capital de tu oponente, <strong>ganas la partida de inmediato</strong>.</p>
+          </div>
+
+          <div class="feature-card" style="border-top: 4px solid var(--color-green);">
+            <div class="feature-card-header">
+              <span class="feature-card-icon">🔬</span>
+              <span class="feature-card-title">Supremacía Científica</span>
+            </div>
+            <p style="font-size: 13px;">Si consigues reunir <strong>6 símbolos científicos diferentes</strong>, obtienes la victoria científica inmediata.</p>
+          </div>
+
+          <div class="feature-card" style="border-top: 4px solid var(--gold-primary);">
+            <div class="feature-card-header">
+              <span class="feature-card-icon">🏛️</span>
+              <span class="feature-card-title">Victoria Civil</span>
+            </div>
+            <p style="font-size: 13px;">Si al finalizar la Era III nadie ha ganado por supremacía, gana el jugador con <strong>más Puntos de Victoria (PV)</strong> totales.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEC 3: PREPARACION -->
+      <section id="sec-setup" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">3</span>
+          Preparación del Juego y Selección de Maravillas
+        </h2>
+        <ol style="margin-left: 20px; color: #cbd5e1; display: flex; flex-direction: column; gap: 10px;">
+          <li>Coloca el tablero entre ambos jugadores. Pon el medidor de Conflicto en la casilla neutral central.</li>
+          <li>Coloca las 4 fichas Militares boca arriba en sus casillas del tablero.</li>
+          <li>Mezcla las fichas de Progreso y coloca <strong>5 al azar boca arriba</strong> en el tablero. Guarda el resto en la caja.</li>
+          <li>Cada jugador recibe <strong>7 monedas</strong> del banco.</li>
+        </ol>
+
+        <h3 style="font-family: 'Cinzel', serif; color: var(--gold-primary); margin-top: 20px; margin-bottom: 10px;">Fase de Selección de Maravillas (Draft)</h3>
+        <p>Se mezclan las 12 cartas de Maravilla. Se colocan 4 boca arriba entre ambos:</p>
+        <ul style="margin-left: 20px; color: #cbd5e1; font-size: 14px;">
+          <li>El <strong>Jugador 1</strong> escoge 1 Maravilla.</li>
+          <li>El <strong>Jugador 2</strong> escoge 2 Maravillas.</li>
+          <li>El <strong>Jugador 1</strong> se queda con la Maravilla restante.</li>
+          <li>Se colocan 4 Maravillas más y se repite el proceso, pero esta vez el <strong>Jugador 2 escoge primero</strong>.</li>
+        </ul>
+        <p style="margin-top: 10px; font-size: 13px; color: var(--text-muted);">Al terminar, cada jugador tendrá 4 Maravillas frente a él (un total de 8 en juego).</p>
+      </section>
+
+      <!-- SEC 4: TURNO DE JUEGO -->
+      <section id="sec-turn" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">4</span>
+          Desarrollo del Turno de Juego
+        </h2>
+        <p>Los jugadores juegan por turnos alternos. En tu turno, debes elegir una carta que esté <strong>«accesible»</strong> (es decir, que no esté cubierta parcialmente por ninguna otra carta de la estructura de la Era) y realizar una de las siguientes <strong>3 acciones</strong>:</p>
+
+        <div class="grid-3">
+          <div class="feature-card">
+            <div class="feature-card-header">
+              <span class="feature-card-icon">🏛️</span>
+              <span class="feature-card-title">1. Construir la Carta</span>
+            </div>
+            <p style="font-size: 13px;">Pagas el coste indicado en la carta (en recursos, monedas o gratis por cadena) y la añades a tu ciudad ordenándola por color.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card-header">
+              <span class="feature-card-icon">💰</span>
+              <span class="feature-card-title">2. Descartar por Monedas</span>
+            </div>
+            <p style="font-size: 13px;">Descartas la carta elegida y recibes del banco <strong>2 monedas + 1 moneda por cada carta amarilla</strong> que ya tenga tu ciudad.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card-header">
+              <span class="feature-card-icon">🗿</span>
+              <span class="feature-card-title">3. Construir una Maravilla</span>
+            </div>
+            <p style="font-size: 13px;">Pagas el coste de una de tus Maravillas y colocas la carta de Era boca abajo debajo de la Maravilla para marcarla como construida.</p>
+          </div>
+        </div>
+
+        <div class="highlight-box red">
+          <strong>Regla de las 7 Maravillas:</strong> Durante toda la partida solo pueden construirse <strong>7 Maravillas en total</strong> entre ambos jugadores. Si alguien construye la 7ª Maravilla, la 8ª Maravilla restante no construida se descarta inmediatamente a la caja.
+        </div>
+      </section>
+
+      <!-- SEC 5: COMERCIO Y CADENAS -->
+      <section id="sec-trade" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">5</span>
+          Mecánica de Comercio y Cadenas Gratuitas
+        </h2>
+        <p>En 7 Wonders Duel, los recursos que producen tus cartas marrones, grises, amarillas o maravillas <strong>nunca se gastan ni se agotan</strong>; los tienes disponibles turno tras turno.</p>
+
+        <h3 style="font-family: 'Cinzel', serif; color: var(--gold-primary); margin-top: 16px; margin-bottom: 8px;">Fórmula Oficial de Comercio</h3>
+        <p>Si te falta algún recurso para construir una carta o maravilla, puedes comprarlo al banco durante tu turno siguiendo esta fórmula:</p>
+
+        <div class="highlight-box blue" style="text-align: center; font-size: 16px; font-weight: 700;">
+          COSTE POR RECURSO = 2 + (Recursos del mismo tipo producidos por cartas MARRONES y GRISES de tu enemigo)
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted);">Nota: Los recursos producidos por cartas amarillas o maravillas del oponente NO aumentan el coste del comercio.</p>
+
+        <h3 style="font-family: 'Cinzel', serif; color: var(--gold-primary); margin-top: 20px; margin-bottom: 8px;">Construcción Gratuita en Cadena</h3>
+        <p>Muchas cartas de las Eras II y III incluyen un <strong>símbolo blanco de cadena</strong> junto a su coste. Si tu ciudad posee la carta de una Era anterior que muestra ese mismo símbolo, ¡puedes construir la nueva carta <strong>totalmente gratis</strong> sin pagar recursos ni monedas!</p>
+      </section>
+
+      <!-- SEC 6: TIPOS DE ESTRUCTURAS -->
+      <section id="sec-structures" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">6</span>
+          Tipos de Estructuras (Cartas por Color)
+        </h2>
+        <p>Las 7 clases de Estructuras se distinguen claramente por el color de su franja superior:</p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+          <div><span class="card-type-badge badge-brown">Marrones</span> <strong>Materias Primas:</strong> Producen Madera, Piedra o Arcilla.</div>
+          <div><span class="card-type-badge badge-grey">Grises</span> <strong>Productos Manufacturados:</strong> Producen Cristal o Papiro.</div>
+          <div><span class="card-type-badge badge-blue">Azules</span> <strong>Estructuras Civiles:</strong> Otorgan Puntos de Victoria puros.</div>
+          <div><span class="card-type-badge badge-green">Verdes</span> <strong>Estructuras Científicas:</strong> Otorgan Puntos de Victoria y 1 símbolo científico.</div>
+          <div><span class="card-type-badge badge-yellow">Amarillas</span> <strong>Estructuras Comerciales:</strong> Proporcionan monedas, recursos, cambian reglas de comercio o dan PV.</div>
+          <div><span class="card-type-badge badge-red">Rojas</span> <strong>Estructuras Militares:</strong> Aumentan tu potencia militar (Escudos).</div>
+          <div><span class="card-type-badge badge-purple">Moradas</span> <strong>Gremios:</strong> Aparecen en la Era III y otorgan Puntos de Victoria y monedas según criterios especiales.</div>
+        </div>
+      </section>
+
+      <!-- SEC 7: PIRAMIDES DE CARTAS -->
+      <section id="sec-pyramids" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">7</span>
+          Disposición de Cartas por Era
+        </h2>
+        <p>Al inicio de cada Era se colocan 20 cartas formando la estructura característica de esa Era. Las cartas se van desbloqueando a medida que quedan totalmente descubiertas.</p>
+
+        <div class="grid-3">
+          <div class="pyramid-box">
+            <div class="pyramid-title">ERA I (Pirámide)</div>
+            <div class="pyramid-rows">
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+              <div class="pyramid-row"><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span></div>
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+              <div class="pyramid-row"><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span></div>
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+            </div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">Filas alternadas Boca Arriba (▲) y Boca Abajo (▼).</p>
+          </div>
+
+          <div class="pyramid-box">
+            <div class="pyramid-title">ERA II (Invertida)</div>
+            <div class="pyramid-rows">
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+              <div class="pyramid-row"><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span></div>
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+              <div class="pyramid-row"><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span></div>
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+            </div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">Pirámide invertida de 6 a 2 cartas.</p>
+          </div>
+
+          <div class="pyramid-box">
+            <div class="pyramid-title">ERA III (Reloj de Arena)</div>
+            <div class="pyramid-rows">
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+              <div class="pyramid-row"><span class="card-node down">▼</span><span class="card-node down">▼</span><span class="card-node down">▼</span></div>
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+              <div class="pyramid-row"><span class="card-node down">▼</span><span class="card-node down">▼</span></div>
+              <div class="pyramid-row"><span class="card-node up">▲</span><span class="card-node up">▲</span><span class="card-node up">▲</span></div>
+            </div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">Incluye 3 Gremios al azar mezclados.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEC 8: EJERCITO Y FICHAS MILITARES -->
+      <section id="sec-military" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">8</span>
+          Ejército y Fichas Militares
+        </h2>
+        <p>Cada escudo que consigas en cartas rojas o maravillas mueve el medidor de Conflicto en el tablero hacia la capital de tu enemigo.</p>
+
+        <h3 style="font-family: 'Cinzel', serif; color: var(--gold-primary); margin-top: 16px; margin-bottom: 8px;">Fichas Militares de Saqueo</h3>
+        <p>Cuando el medidor de conflicto entra por primera vez en una nueva zona delimitada del tablero, se activa la ficha militar de esa casilla:</p>
+        <ul style="margin-left: 20px; color: #cbd5e1; font-size: 14px;">
+          <li><strong>Ficha de 2 monedas:</strong> Tu oponente pierde 2 monedas inmediatamente (se devuelven al banco y la ficha se descarta).</li>
+          <li><strong>Ficha de 5 monedas:</strong> Tu oponente pierde 5 monedas inmediatamente (se devuelven al banco y la ficha se descarta).</li>
+        </ul>
+      </section>
+
+      <!-- SEC 9: CIENCIA Y FICHAS PROGRESO -->
+      <section id="sec-science" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">9</span>
+          Ciencia y Guía de las 10 Fichas de Progreso
+        </h2>
+        <p>Cada vez que consigas una <strong>pareja de símbolos científicos idénticos</strong> en tu ciudad, coges inmediatamente una de las <strong>fichas de Progreso</strong> disponibles en el tablero.</p>
+
+        <div class="grid-2" style="margin-top: 16px;">
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">🌾 Agricultura</span>
+            <p style="font-size: 13px;">Ganas 6 monedas del banco inmediatamente. Otorga <strong>4 Puntos de Victoria</strong> al final.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">🏛️ Arquitectura</span>
+            <p style="font-size: 13px;">Cualquier Maravilla que construyas después te costará <strong>2 recursos menos</strong> (a tu elección).</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">💰 Economía</span>
+            <p style="font-size: 13px;">Te quedas con todas las monedas que tu oponente gaste al comerciar con el banco.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">⚖️ Derecho</span>
+            <p style="font-size: 13px;">Cuenta como <strong>1 símbolo científico adicional</strong> (séptimo símbolo en el juego).</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">🧱 Albañilería</span>
+            <p style="font-size: 13px;">Cualquier Estructura civil (azul) que construyas te costará <strong>2 recursos menos</strong>.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">📐 Matemáticas</span>
+            <p style="font-size: 13px;">Al final de la partida consigues <strong>3 PV por cada ficha de Progreso</strong> que poseas (incluyendo esta).</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">📜 Filosofía</span>
+            <p style="font-size: 13px;">Otorga directamente <strong>7 Puntos de Victoria</strong> al final de la partida.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">🛡️ Estrategia</span>
+            <p style="font-size: 13px;">Tus nuevas cartas militares (rojas) otorgarán <strong>1 Escudo adicional</strong>.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">⛪ Teología</span>
+            <p style="font-size: 13px;">Todas las Maravillas que construyas a partir de ahora obtienen el efecto <strong>«juega un segundo turno»</strong>.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card-title" style="color: var(--gold-light);">🏗️ Urbanismo</span>
+            <p style="font-size: 13px;">Ganas 6 monedas del banco inmediatamente. Cada vez que construyas por cadena ganas 4 monedas.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEC 10: MARAVILLAS -->
+      <section id="sec-wonders" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">10</span>
+          Catálogo Ilustrado de las 12 Maravillas
+        </h2>
+        <p>Las 12 Maravillas del mundo antiguo ofrecen poderosos efectos estratégicos al ser construidas:</p>
+
+        <div class="wonders-grid">
+          
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_pyramids.png" alt="Las Pirámides" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">Las Pirámides</span>
+              <p class="wonder-effect">Coste: 1 Papiro, 3 Piedras. Otorga una enorme cantidad de puntos puros.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">9 Puntos de Victoria</span></div>
+            </div>
+          </div>
+
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_colossus.png" alt="El Coloso" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">El Coloso</span>
+              <p class="wonder-effect">Coste: 1 Cristal, 3 Arcillas. Refuerza tu ejército con fuerza devastadora.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">3 PV</span><span class="tag-chip military">2 Escudos</span></div>
+            </div>
+          </div>
+
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_lighthouse.png" alt="El Gran Faro" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">El Gran Faro</span>
+              <p class="wonder-effect">Coste: 2 Papiros, 1 Piedra, 1 Madera. Produce 1 Madera, Piedra o Arcilla a tu elección en cada turno.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">4 PV</span><span class="tag-chip">Recurso a elección</span></div>
+            </div>
+          </div>
+
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_temple_artemis.png" alt="Templo de Artemisa" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">Templo de Artemisa</span>
+              <p class="wonder-effect">Coste: 1 Papiro, 1 Cristal, 1 Piedra, 1 Madera. Aporta liquidez masiva.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">12 Monedas</span><span class="tag-chip turn">Repite Turno</span></div>
+            </div>
+          </div>
+
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_mausoleum.png" alt="El Mausoleo" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">El Mausoleo</span>
+              <p class="wonder-effect">Coste: 1 Papiro, 2 Cristales, 2 Arcillas. Resucita una carta descartada y constrúyela gratis.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">2 PV</span><span class="tag-chip">Resucita Descarte</span></div>
+            </div>
+          </div>
+
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_hanging_gardens.png" alt="Jardines Colgantes" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">Jardines Colgantes</span>
+              <p class="wonder-effect">Coste: 2 Maderas, 1 Papiro, 1 Cristal. Proporciona tesoro y ritmo de juego.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">3 PV</span><span class="tag-chip">6 Monedas</span><span class="tag-chip turn">Repite Turno</span></div>
+            </div>
+          </div>
+
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_statue_zeus.png" alt="Estatua de Zeus" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">Estatua de Zeus</span>
+              <p class="wonder-effect">Coste: 2 Papiros, 1 Arcilla, 1 Madera, 1 Piedra. Destruye 1 carta marrón (materia prima) del rival.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">3 PV</span><span class="tag-chip military">1 Escudo</span><span class="tag-chip">Destruye Marrón</span></div>
+            </div>
+          </div>
+
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_piraeus.png" alt="Piraeus" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">El Pireo</span>
+              <p class="wonder-effect">Coste: 2 Maderas, 1 Arcilla, 1 Piedra. Produce 1 Cristal o 1 Papiro cada turno.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">2 PV</span><span class="tag-chip turn">Repite Turno</span><span class="tag-chip">Manufactura</span></div>
+            </div>
+          </div>
+
+          <div class="wonder-item-card">
+            <div class="wonder-img-wrap"><img src="img/wonder_great_library.png" alt="La Gran Biblioteca" class="wonder-img" onerror="this.src='img/art_wonder.png'"></div>
+            <div class="wonder-content">
+              <span class="wonder-title">La Gran Biblioteca</span>
+              <p class="wonder-effect">Coste: 3 Maderas, 1 Papiro, 1 Cristal. Roba 3 fichas de Progreso descartadas y elige 1.</p>
+              <div class="wonder-tags"><span class="tag-chip vp">4 PV</span><span class="tag-chip">Progreso Extra</span></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SEC 11: GREMIOS Y PUNTUACION -->
+      <section id="sec-guilds" class="rule-section">
+        <h2 class="section-header-title">
+          <span class="badge-num">11</span>
+          Gremios y Puntuación Final
+        </h2>
+        <p>Las 7 cartas de Gremio (moradas) otorgan monedas al construirse y Puntos de Victoria al final según la ciudad más destacada:</p>
+        
+        <ul style="margin-left: 20px; color: #cbd5e1; font-size: 14px; display: flex; flex-direction: column; gap: 8px;">
+          <li><strong>Gremio de Constructores:</strong> 2 PV por cada Maravilla construida en la ciudad con más maravillas.</li>
+          <li><strong>Gremio de Prestamistas:</strong> 1 PV por cada grupo de 3 monedas en la ciudad más rica.</li>
+          <li><strong>Gremio de Científicos:</strong> 1 Moneda y 1 PV por cada carta verde en la ciudad con más cartas verdes.</li>
+          <li><strong>Gremio de Armadores:</strong> 1 Moneda y 1 PV por cada carta marrón y gris en la ciudad con más cartas de producción.</li>
+          <li><strong>Gremio de Comerciantes:</strong> 1 Moneda y 1 PV por cada carta amarilla en la ciudad con más cartas amarillas.</li>
+          <li><strong>Gremio de Magistrados:</strong> 1 Moneda y 1 PV por cada carta azul en la ciudad con más cartas azules.</li>
+          <li><strong>Gremio de Tácticos:</strong> 1 Moneda y 1 PV por cada carta roja en la ciudad con más cartas rojas.</li>
+        </ul>
+
+        <div class="highlight-box" style="margin-top: 20px;">
+          <strong>Desempate:</strong> En caso de empate en Puntos de Victoria al final de la Era III, gana el jugador que tenga más puntos acumulados en sus <strong>Estructuras Civiles (cartas azules)</strong>. Si persiste el empate, comparten la victoria.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <p class="footer-text">7 Wonders Duel © Repos Production & Sombreros Production. Adaptación digital responsive por <a href="https://github.com/jorvil1993/7-wonders-duel" target="_blank">jorvil1993</a>.</p>
+  </footer>
+
+  <script>
+    // TOC INTERACTIVE SCROLL & MOBILE TOGGLE
+    const sidebar = id('sidebarNav');
+    const tocToggleBtn = id('tocToggleBtn');
+    const searchInput = id('searchInput');
+    const sections = document.querySelectorAll('.rule-section');
+    const tocLinks = document.querySelectorAll('.toc-item a');
+
+    function id(str) { return document.getElementById(str); }
+
+    if (tocToggleBtn) {
+      tocToggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+      });
+    }
+
+    // ScrollSpy active indicator
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 120;
+        if (window.scrollY >= top) {
+          current = sec.getAttribute('id');
+        }
+      });
+
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Search filter
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase().trim();
+        sections.forEach(sec => {
+          const text = sec.textContent.toLowerCase();
+          if (text.includes(term)) {
+            sec.style.display = 'block';
+          } else {
+            sec.style.display = 'none';
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>
